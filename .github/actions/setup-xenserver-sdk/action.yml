@@ -37,7 +37,7 @@ runs:
             if match:
                 version = match.group(1)
                 sdk_url = f'https://downloads.xenserver.com/sdk/{version}/XenServer-SDK-{version}.zip'
-                env.GITHUB_ENV = f'XENSERVER_SDK_URL={sdk_url}'
+                env.GITHUB_OUTPUT = f'XENSERVER_SDK_URL={sdk_url}'
         EOF
 
     - name: Download and extract SDK
