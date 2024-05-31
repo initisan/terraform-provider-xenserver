@@ -19,5 +19,5 @@ for text in soup.stripped_strings:
     if match:
         version = match.group(1)
         sdk_url = f'https://downloads.xenserver.com/sdk/{version}/XenServer-SDK-{version}.zip'
-        os.environ['GITHUB_OUTPUT'] = f'XENSERVER_SDK_URL={sdk_url}'
+        print(f"::set-output name=XENSERVER_SDK_URL::{sdk_url}")
         break
