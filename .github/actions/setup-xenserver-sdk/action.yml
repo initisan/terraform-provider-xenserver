@@ -31,5 +31,7 @@ runs:
           url=${{ steps.extract-xensdk-version.outputs.XENSERVER_SDK_URL }}
         fi
         curl -L $url -o xenserver-sdk.zip
-        unzip -d goSDK xenserver-sdk.zip
+        unzip xenserver-sdk.zip
+        mkdir -p goSDK
+        mv XenServer-SDK*/XenServerGo/src/* goSDK/
         rm -rf XenServer-SDK* xenserver-sdk.zip
