@@ -12,13 +12,14 @@ runs:
       with:
         python-version: "3.x"
 
-    - name: Install dependencies
+    - name: Install python dependencies
       shell: bash
       run: |
         python -m pip install --upgrade pip
         pip install beautifulsoup4 requests
 
-    - name: Run script
+    - name: extract xensdk version
+      id: extract-xensdk-version
       shell: bash
       run: |
         python - <<EOF
@@ -36,8 +37,7 @@ runs:
             if match:
                 version = match.group(1)
                 sdk_url = f'https://downloads.xenserver.com/sdk/{version}/XenServer-SDK-{version}.zip'
-                with open('${{ env.GITHUB_ENV }}', 'a') as file:
-                    file.write(f"SDK_URL={sdk_url}\n")
+                env.GITHUB_ENV = f'XENSERVER_SDK_URL={sdk_url}'
         EOF
 
     - name: Download and extract SDK
@@ -45,7 +45,7 @@ runs:
       run: |
         url=${{ inputs.XENSERVER_SDK_URL }}
         if [ -z "$url" ]; then
-          url=${{ env.SDK_URL }}
+          url=${{ steps.extract-xensdk-version.output.XENSERVER_SDK_URL }}
         fi
         curl -L $url -o xenserver-sdk.zip
         unzip -d goSDK xenserver-sdk.zip
