@@ -28,7 +28,7 @@ runs:
       run: |
         url=${{ inputs.XENSERVER_SDK_URL }}
         if [ -z "$url" ]; then
-          url=${{ steps.extract-xensdk-version.output.XENSERVER_SDK_URL }}
+          url=${{ steps.extract-xensdk-version.outputs.XENSERVER_SDK_URL }}
         fi
         curl -L $url -o xenserver-sdk.zip
         unzip -d goSDK xenserver-sdk.zip
