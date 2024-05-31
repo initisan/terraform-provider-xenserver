@@ -36,7 +36,8 @@ runs:
             if match:
                 version = match.group(1)
                 sdk_url = f'https://downloads.xenserver.com/sdk/{version}/XenServer-SDK-{version}.zip'
-                print(f"::set-output name=sdk_url::{sdk_url}")
+                with open('${{ env.GITHUB_ENV }}', 'a') as file:
+                    file.write(f"SDK_URL={sdk_url}\n")
         EOF
 
     - name: Download and extract SDK
@@ -44,7 +45,7 @@ runs:
       run: |
         url=${{ inputs.XENSERVER_SDK_URL }}
         if [ -z "$url" ]; then
-          url=${{ steps.get_sdk_url.outputs.sdk_url }}
+          url=${{ env.SDK_URL }}
         fi
         curl -L $url -o xenserver-sdk.zip
         unzip -d goSDK xenserver-sdk.zip
