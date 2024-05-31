@@ -21,7 +21,7 @@ runs:
     - name: extract xensdk version
       id: extract-xensdk-version
       shell: bash
-      run: python extract_sdk_version.py
+      run: python ./github/actions/setup-xenserver-sdk/extract_sdk_version.py
 
     - name: Download and extract SDK
       shell: bash
