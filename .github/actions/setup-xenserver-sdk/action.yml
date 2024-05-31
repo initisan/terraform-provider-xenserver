@@ -7,10 +7,45 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: |
-        curl -LO ${{ inputs.XENSERVER_SDK_URL }}
-        unzip XenServer-SDK.zip
-        mkdir -p goSDK
-        mv XenServer-SDK/XenServerGo/src/* goSDK/
-        rm -rf XenServer-SDK XenServer-SDK.zip
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.x"
+
+    - name: Install dependencies
       shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install beautifulsoup4 requests
+
+    - name: Run script
+      shell: bash
+      run: |
+        python - <<EOF
+        import requests
+        import re
+        from bs4 import BeautifulSoup
+
+        response = requests.get('https://www.xenserver.com/downloads')
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        pattern = re.compile(r'Software Development Kit \(SDK\) (\d+\.\d+\.\d+)')
+
+        for text in soup.stripped_strings:
+            match = pattern.search(text)
+            if match:
+                version = match.group(1)
+                sdk_url = f'https://downloads.xenserver.com/sdk/{version}/XenServer-SDK-{version}.zip'
+                print(f"::set-output name=sdk_url::{sdk_url}")
+        EOF
+
+    - name: Download and extract SDK
+      shell: bash
+      run: |
+        url=${{ inputs.XENSERVER_SDK_URL }}
+        if [ -z "$url" ]; then
+          url=${{ steps.get_sdk_url.outputs.sdk_url }}
+        fi
+        curl -L $url -o xenserver-sdk.zip
+        unzip -d goSDK xenserver-sdk.zip
+        rm -rf XenServer-SDK* xenserver-sdk.zip

@@ -25,8 +25,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Download and extract XenServer SDK
         uses: ./.github/actions/setup-xenserver-sdk
-        with:
-          XENSERVER_SDK_URL: ${{ vars.XENSERVER_SDK_URL }}
       - uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
